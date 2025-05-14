@@ -48,6 +48,20 @@ module "project" {
   default_service_account = "keep"
   # Do not create an additional project service account to be used for Compute Engine.
   create_project_sa = false
+
+  {{- if has .project "shared_vpc_attachment"}}
+  {{$host := get .project.shared_vpc_attachment "host_project_id"}}
+  svpc_host_project_id = "{{$host}}"
+  {{- if has .project "shared_vpc_attachment.subnets"}}
+  shared_vpc_subnets = [
+    {{- range get .project "shared_vpc_attachment.subnets"}}
+    {{- $region := get . "compute_region" $.compute_region}}
+    "projects/{{$host}}/regions/{{$region}}/subnetworks/{{.name}}",
+    {{- end}}
+  ]
+  {{- end}}
+  {{- end}}
+
   activate_apis = [
     "cloudbuild.googleapis.com",
     "cloudidentity.googleapis.com",

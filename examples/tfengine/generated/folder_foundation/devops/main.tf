@@ -44,6 +44,7 @@ module "project" {
   default_service_account = "keep"
   # Do not create an additional project service account to be used for Compute Engine.
   create_project_sa = false
+
   activate_apis = [
     "cloudbuild.googleapis.com",
     "cloudidentity.googleapis.com",

@@ -127,6 +127,42 @@ schema = {
             (even if the resources themselves are in different projects).
           EOF
         }
+        shared_vpc_attachment = {
+          description          = "If set, treats this project as a shared VPC service project."
+          type                 = "object"
+          additionalProperties = false
+          required = [
+            "host_project_id",
+          ]
+          properties = {
+            host_project_id = {
+              description = "ID of host project to connect this project to."
+              type        = "string"
+              pattern     = "^[a-z][a-z0-9\\-]{4,28}[a-z0-9]$"
+            }
+            subnets = {
+              description = "Subnets within the host project to grant this project access to."
+              type        = "array"
+              items = {
+                type                 = "object"
+                additionalProperties = false
+                required = [
+                  "name",
+                ]
+                properties = {
+                  name = {
+                    description = "Name of subnet."
+                    type        = "string"
+                  }
+                  compute_region = {
+                    description = "Region of subnet."
+                    type        = "string"
+                  }
+                }
+              }
+            }
+          }
+        }
         labels = {
           description = "Map of labels for this project"
           type        = "object"

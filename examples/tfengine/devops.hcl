@@ -37,6 +37,9 @@ template "devops" {
 
     project = {
       project_id = "example-devops"
+      shared_vpc_attachment = {
+        host_project_id = "example-host"
+      }
       owners_group = {
         id     = "example-devops-owners@example.com"
         exists = true

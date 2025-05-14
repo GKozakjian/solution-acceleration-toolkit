@@ -45,8 +45,6 @@ module "project" {
 
   {{- if get . "is_shared_vpc_host"}}
   enable_shared_vpc_host_project = true
-  {{- else}}
-  enable_shared_vpc_service_project = true
   {{- end}}
 
   {{- if has . "shared_vpc_attachment"}}
