@@ -51,6 +51,7 @@ module "project" {
   # Compute Security Admin role on the VPC host project so it can manage firewall rules.
   # It is a no-op when Kubernetes Engine API is not enabled in the project.
   grant_services_security_admin_role = true
+  enable_shared_vpc_service_projec   = true
 
   svpc_host_project_id = "example-prod-networks"
   shared_vpc_subnets = [
