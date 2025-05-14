@@ -17,7 +17,7 @@ terraform {
   required_providers {
     google      = ">= 3.0"
     google-beta = ">= 3.0"
-    kubernetes  = "~> 1.0"
+    kubernetes  = "~> 2.10"
   }
   backend "gcs" {
     bucket = "example-terraform-state"
@@ -30,7 +30,7 @@ terraform {
 # Shared VPC: https://cloud.google.com/docs/enterprise/best-practices-for-enterprise-organizations#centralize_network_control
 module "project" {
   source  = "terraform-google-modules/project-factory/google"
-  version = "~> 11.3.0"
+  version = "~> 14.4.0"
 
   name            = "example-apps"
   org_id          = "12345678"
@@ -56,7 +56,6 @@ data "google_client_config" "default" {}
 
 provider "kubernetes" {
   alias                  = "example_cluster"
-  load_config_file       = false
   host                   = "https://${module.example_cluster.endpoint}"
   token                  = data.google_client_config.default.access_token
   cluster_ca_certificate = base64decode(module.example_cluster.ca_certificate)
@@ -64,7 +63,7 @@ provider "kubernetes" {
 
 module "example_cluster" {
   source  = "terraform-google-modules/kubernetes-engine/google//modules/safer-cluster-update-variant"
-  version = "~> 13.1.0"
+  version = "~> 29.0.0"
 
   providers = {
     kubernetes = kubernetes.example_cluster
@@ -82,7 +81,6 @@ module "example_cluster" {
   ip_range_pods           = "pods-range"
   ip_range_services       = "services-range"
   master_ipv4_cidr_block  = "192.168.0.0/28"
-  skip_provisioners       = true
   enable_private_endpoint = false
   release_channel         = "STABLE"
 

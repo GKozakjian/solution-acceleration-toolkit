@@ -15,7 +15,7 @@ limitations under the License. */ -}}
 {{range get . "healthcare_datasets"}}
 module "{{resourceName . "name"}}" {
   source  = "terraform-google-modules/healthcare/google"
-  version = "~> 2.2.1"
+  version = "~> 2.4.0"
 
   name     = "{{.name}}"
   project  = module.project.project_id
@@ -78,13 +78,21 @@ module "{{resourceName . "name"}}" {
       {{hclField . "disable_referential_integrity" -}}
       {{hclField . "disable_resource_versioning" -}}
       {{hclField . "enable_history_import" -}}
+      {{hclField . "enable_history_modifications" -}}
+      {{hclField . "complex_data_type_reference_parsing" -}}
 
       {{hclField . "iam_members" -}}
 
-      {{if has . "notification_config" -}}
-      notification_config = {
-        {{hcl .notification_config}}
-      }
+      {{if has . "notification_configs" -}}
+      notification_configs = [
+        {{range $k, $v := .notification_configs -}}
+        {
+          pubsub_topic = "{{$v.pubsub_topic}}"
+          {{hclField $v "send_full_resource" -}}
+	  {{hclField $v "send_previous_resource_on_delete" -}}
+        },
+        {{end -}}
+      ]
       {{end -}}
 
       {{if has . "stream_configs" -}}
@@ -94,8 +102,17 @@ module "{{resourceName . "name"}}" {
           bigquery_destination = {
             dataset_uri = "{{$v.bigquery_destination.dataset_uri}}"
             schema_config = {
-              {{hcl $v.bigquery_destination.schema_config}}
-            }
+              recursive_structure_depth = "{{$v.bigquery_destination.schema_config.recursive_structure_depth}}"
+              schema_type = "{{$v.bigquery_destination.schema_config.schema_type}}"
+              {{if has .bigquery_destination.schema_config "last_updated_partition_config" -}}
+	      last_updated_partition_config = {
+                {{if has .bigquery_destination.schema_config.last_updated_partition_config "expiration_ms" -}}
+                expiration_ms = "{{$v.bigquery_destination.schema_config.last_updated_partition_config.expiration_ms}}"
+		{{end -}}
+		{{hclField .bigquery_destination.schema_config.last_updated_partition_config "type" -}}
+              }
+	      {{end -}}
+	    }
           }
           {{hclField $v "resource_types" -}}
         },

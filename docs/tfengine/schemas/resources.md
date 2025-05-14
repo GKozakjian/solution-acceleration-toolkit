@@ -149,9 +149,11 @@
 | healthcare_datasets.dicom_stores.name | Name of dicom store. | string | true | - | - |
 | healthcare_datasets.dicom_stores.notification_config | See <https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/healthcare_dicom_store#notification_config>. | object | false | - | - |
 | healthcare_datasets.fhir_stores | FHIR stores to create. | array(object) | false | - | - |
+| healthcare_datasets.fhir_stores.complex_data_type_reference_parsing | See <https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/healthcare_fhir_store#complex_data_type_reference_parsing>. | string | false | - | - |
 | healthcare_datasets.fhir_stores.disable_referential_integrity | See <https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/healthcare_fhir_store#disable_referential_integrity>. | boolean | false | - | - |
 | healthcare_datasets.fhir_stores.disable_resource_versioning | See <https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/healthcare_fhir_store#disable_resource_versioning>. | boolean | false | - | - |
 | healthcare_datasets.fhir_stores.enable_history_import | See <https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/healthcare_fhir_store#enable_history_import>. | boolean | false | - | - |
+| healthcare_datasets.fhir_stores.enable_history_modifications | See <https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/healthcare_fhir_store#enable_history_modifications>. | boolean | false | - | - |
 | healthcare_datasets.fhir_stores.enable_update_create | See <https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/healthcare_fhir_store#enable_update_create>. | boolean | false | - | - |
 | healthcare_datasets.fhir_stores.iam_members | IAM member to grant access for. | array(object) | false | - | - |
 | healthcare_datasets.fhir_stores.iam_members.member | Member to grant acess to role. | string | true | - | - |
@@ -159,11 +161,17 @@
 | healthcare_datasets.fhir_stores.labels | Labels to set on the FHIR store. | object | false | - | - |
 | healthcare_datasets.fhir_stores.labels.*pattern* | - | string | false | - | .+ |
 | healthcare_datasets.fhir_stores.name | Name of FHIR store. | string | true | - | - |
-| healthcare_datasets.fhir_stores.notification_config | See <https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/healthcare_fhir_store#notification_config>. | object | false | - | - |
+| healthcare_datasets.fhir_stores.notification_configs | See <https://registry.terraform.io/providers/hashicorp/google-beta/latest/docs/resources/healthcare_fhir_store#notification_configs>. | array(object) | false | - | - |
+| healthcare_datasets.fhir_stores.notification_configs.pubsub_topic | - | string | true | - | - |
+| healthcare_datasets.fhir_stores.notification_configs.send_full_resource | - | boolean | false | - | - |
+| healthcare_datasets.fhir_stores.notification_configs.send_previous_resource_on_delete | - | boolean | false | - | - |
 | healthcare_datasets.fhir_stores.stream_configs | See <https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/healthcare_fhir_store#stream_configs>. | array(object) | false | - | - |
 | healthcare_datasets.fhir_stores.stream_configs.bigquery_destination | - | object | true | - | - |
 | healthcare_datasets.fhir_stores.stream_configs.bigquery_destination.dataset_uri | - | string | true | - | - |
 | healthcare_datasets.fhir_stores.stream_configs.bigquery_destination.schema_config | - | object | true | - | - |
+| healthcare_datasets.fhir_stores.stream_configs.bigquery_destination.schema_config.last_updated_partition_config | - | object | false | - | - |
+| healthcare_datasets.fhir_stores.stream_configs.bigquery_destination.schema_config.last_updated_partition_config.expiration_ms | - | integer | false | - | - |
+| healthcare_datasets.fhir_stores.stream_configs.bigquery_destination.schema_config.last_updated_partition_config.type | - | string | true | - | - |
 | healthcare_datasets.fhir_stores.stream_configs.bigquery_destination.schema_config.recursive_structure_depth | - | integer | true | - | - |
 | healthcare_datasets.fhir_stores.stream_configs.bigquery_destination.schema_config.schema_type | - | string | false | - | - |
 | healthcare_datasets.fhir_stores.stream_configs.resource_types | - | array(string) | false | - | - |
@@ -211,6 +219,7 @@
 | pubsub_topics.push_subscriptions.ack_deadline_seconds | Deadline to wait for acknowledgement. | integer | false | - | - |
 | pubsub_topics.push_subscriptions.name | Name of subscription. | string | true | - | - |
 | pubsub_topics.push_subscriptions.push_endpoint | Name of endpoint to push to. | string | false | - | - |
+| pubsub_topics.topic_message_retention_duration | Message retention duration in seconds. | string | false | - | - |
 | secrets | [Module](https://www.terraform.io/docs/providers/google/r/secret_manager_secret.html) | array() | false | - | - |
 | secrets.resource_name | Override for Terraform resource name. If unset, defaults to normalized secret_id. Normalization will make all characters alphanumeric with underscores. | string | false | - | - |
 | secrets.secret_data | Data of the secret. If unset, should be manually set in the GCP console. | string | false | - | - |
@@ -237,7 +246,9 @@
 | storage_buckets.lifecycle_rules.condition | The Lifecycle Rule's condition configuration. | object | false | - | - |
 | storage_buckets.lifecycle_rules.condition.age | Minimum age of an object in days. | integer | false | - | - |
 | storage_buckets.lifecycle_rules.condition.created_before | Creation date of an object in RFC 3339 (e.g. 2017-06-13). | string | false | - | - |
+| storage_buckets.lifecycle_rules.condition.matches_prefix | Match the object with prefix in the bucket. | array(string) | false | - | - |
 | storage_buckets.lifecycle_rules.condition.matches_storage_class | Storage Class of objects. | string | false | - | - |
+| storage_buckets.lifecycle_rules.condition.matches_suffix | Match the object with suffix in the bucket. | array(string) | false | - | - |
 | storage_buckets.lifecycle_rules.condition.num_newer_versions | Relevant only for versioned objects. The number of newer versions of an object." | integer | false | - | - |
 | storage_buckets.lifecycle_rules.condition.with_state | Match to live and/or archived objects. | string | false | - | - |
 | storage_buckets.name | Name of storage bucket. | string | false | - | - |

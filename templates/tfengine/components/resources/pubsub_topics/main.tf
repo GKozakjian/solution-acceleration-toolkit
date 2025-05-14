@@ -15,7 +15,7 @@ limitations under the License. */ -}}
 {{range .pubsub_topics}}
 module "{{resourceName . "name"}}" {
   source  = "terraform-google-modules/pubsub/google"
-  version = "~> 4.0.0"
+  version = "~> 6.0"
 
   topic        = "{{.name}}"
   project_id   = module.project.project_id
@@ -30,6 +30,7 @@ module "{{resourceName . "name"}}" {
 
   {{hclField . "pull_subscriptions" -}}
   {{hclField . "push_subscriptions" -}}
+  {{hclField . "topic_message_retention_duration" -}}
 
   depends_on = [
     module.project

@@ -17,7 +17,7 @@ terraform {
   required_providers {
     google      = ">= 3.0"
     google-beta = ">= 3.0"
-    kubernetes  = "~> 1.0"
+    kubernetes  = "~> 2.10"
   }
   backend "gcs" {
     bucket = "example-terraform-state"
@@ -34,7 +34,6 @@ data "google_container_cluster" "gke_cluster" {
 }
 
 provider "kubernetes" {
-  load_config_file       = false
   token                  = data.google_client_config.default.access_token
   host                   = data.google_container_cluster.gke_cluster.endpoint
   client_certificate     = base64decode(data.google_container_cluster.gke_cluster.master_auth.0.client_certificate)
@@ -45,7 +44,7 @@ provider "kubernetes" {
 
 module "project" {
   source  = "terraform-google-modules/project-factory/google//modules/project_services"
-  version = "~> 11.3.0"
+  version = "~> 14.4.0"
 
   project_id    = "example-prod-apps"
   activate_apis = []
@@ -75,7 +74,7 @@ resource "kubernetes_namespace" "namespace" {
 
 module "workload_identity_namespace" {
   source     = "terraform-google-modules/kubernetes-engine/google//modules/workload-identity"
-  version    = "16.1.0"
+  version    = "29.0.0"
   project_id = module.project.project_id
   name       = "runner"
 

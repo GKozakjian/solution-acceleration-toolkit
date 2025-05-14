@@ -17,7 +17,7 @@ terraform {
   required_providers {
     google      = ">= 3.0"
     google-beta = ">= 3.0"
-    kubernetes  = "~> 1.0"
+    kubernetes  = "~> 2.10"
   }
   backend "gcs" {
     bucket = "example-terraform-state"
@@ -38,7 +38,7 @@ data "google_secret_manager_secret_version" "db_password" {
 # Shared VPC: https://cloud.google.com/docs/enterprise/best-practices-for-enterprise-organizations#centralize_network_control
 module "project" {
   source  = "terraform-google-modules/project-factory/google"
-  version = "~> 11.3.0"
+  version = "~> 14.4.0"
 
   name            = "example-prod-data"
   org_id          = ""
@@ -81,7 +81,7 @@ module "project" {
 
 module "one_billion_ms_dataset" {
   source  = "terraform-google-modules/bigquery/google"
-  version = "~> 5.3.0"
+  version = "~> 7.0.0"
 
   dataset_id                  = "1billion_ms_dataset"
   project_id                  = module.project.project_id
@@ -116,7 +116,7 @@ module "sql_instance" {
 
 module "healthcare_dataset" {
   source  = "terraform-google-modules/healthcare/google"
-  version = "~> 2.2.1"
+  version = "~> 2.4.0"
 
   name     = "healthcare-dataset"
   project  = module.project.project_id
@@ -151,21 +151,30 @@ module "healthcare_dataset" {
       name    = "fhir-store-a"
       version = "R4"
 
-      enable_update_create          = true
-      disable_referential_integrity = false
-      disable_resource_versioning   = false
-      enable_history_import         = false
-      notification_config = {
-        pubsub_topic = "projects/example-prod-data/topics/${module.topic.topic}"
-      }
+      enable_update_create                = true
+      disable_referential_integrity       = false
+      disable_resource_versioning         = false
+      enable_history_import               = false
+      enable_history_modifications        = false
+      complex_data_type_reference_parsing = "DISABLED"
+      notification_configs = [
+        {
+          pubsub_topic                     = "projects/example-prod-data/topics/${module.topic.topic}"
+          send_full_resource               = true
+          send_previous_resource_on_delete = true
+        },
+      ]
       stream_configs = [
         {
           bigquery_destination = {
             dataset_uri = "bq://example-prod-data.${module.one_billion_ms_dataset.bigquery_dataset.dataset_id}"
             schema_config = {
-              recursive_structure_depth = 3
-
-              schema_type = "ANALYTICS"
+              recursive_structure_depth = "3"
+              schema_type               = "ANALYTICS"
+              last_updated_partition_config = {
+                expiration_ms = "1e+06"
+                type          = "HOUR"
+              }
             }
           }
           resource_types = ["Patient"]
@@ -211,7 +220,7 @@ module "healthcare_dataset" {
 
 module "project_iam_members" {
   source  = "terraform-google-modules/iam/google//modules/projects_iam"
-  version = "~> 7.4.0"
+  version = "~> 7.7.1"
 
   projects = [module.project.project_id]
   mode     = "additive"
@@ -225,7 +234,7 @@ module "project_iam_members" {
 
 module "topic" {
   source  = "terraform-google-modules/pubsub/google"
-  version = "~> 4.0.0"
+  version = "~> 6.0"
 
   topic      = "topic"
   project_id = module.project.project_id
@@ -245,6 +254,7 @@ module "topic" {
       push_endpoint = "https://example.com"
     },
   ]
+  topic_message_retention_duration = "86400s"
   depends_on = [
     module.project
   ]

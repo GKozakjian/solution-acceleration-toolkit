@@ -961,6 +961,14 @@ schema = {
                   description = "See <https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/healthcare_fhir_store#enable_history_import>."
                   type        = "boolean"
                 }
+                enable_history_modifications = {
+                  description = "See <https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/healthcare_fhir_store#enable_history_modifications>."
+                  type        = "boolean"
+                }
+                complex_data_type_reference_parsing = {
+                  description = "See <https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/healthcare_fhir_store#complex_data_type_reference_parsing>."
+                  type        = "string"
+                }
                 labels = {
                   description = "Labels to set on the FHIR store."
                   type        = "object"
@@ -990,9 +998,26 @@ schema = {
                     }
                   }
                 }
-                notification_config = {
-                  description = "See <https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/healthcare_fhir_store#notification_config>."
-                  type        = "object"
+                notification_configs = {
+                  description = "See <https://registry.terraform.io/providers/hashicorp/google-beta/latest/docs/resources/healthcare_fhir_store#notification_configs>."
+                  type        = "array"
+                  items  = {
+                    type = "object"
+                    required = [
+                      "pubsub_topic",
+                    ]
+                    properties = {
+                      pubsub_topic = {
+                        type = "string"
+                      }
+                      send_full_resource = {
+                        type = "boolean"
+                      }
+		      send_previous_resource_on_delete = {
+                        type = "boolean"
+                      }
+                    }
+                  }
                 }
                 stream_configs = {
                   description = "See <https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/healthcare_fhir_store#stream_configs>."
@@ -1033,6 +1058,21 @@ schema = {
                               }
                               recursive_structure_depth = {
                                 type = "integer"
+                              }
+			      last_updated_partition_config = {
+                                type = "object"
+				additionalProperties = false
+				required = [
+                                  "type",
+                                ]
+				properties = {
+				  type = {
+                                    type = "string"
+                                  }
+                                  expiration_ms = {
+                                    type = "integer"
+                                  }
+                                }
                               }
                             }
                           }
@@ -1138,6 +1178,10 @@ schema = {
         properties = {
           name = {
             description = "Name of the topic."
+            type        = "string"
+          }
+          topic_message_retention_duration = {
+            description = "Message retention duration in seconds."
             type        = "string"
           }
           labels = {
@@ -1361,6 +1405,20 @@ schema = {
                         The number of newer versions of an object."
                       EOF
                       type        = "integer"
+                    }
+                    matches_prefix = {
+                      description = "Match the object with prefix in the bucket."
+                      type        = "array"
+                      items = {
+                        type = "string"
+                      }
+                    }
+                    matches_suffix = {
+                      description = "Match the object with suffix in the bucket."
+                      type        = "array"
+                      items = {
+                        type = "string"
+                      }
                     }
                   }
                 }

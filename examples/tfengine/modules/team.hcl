@@ -54,11 +54,11 @@ template "project_secrets" {
       providers = [
         {
           name = "google",
-          version_constraints = ">=3.0, <= 3.71"
+          version_constraints = ">=3.0, <= 6"
         },
         {
           name = "google-beta",
-          version_constraints = "~>3.50"
+          version_constraints = "<= 6"
         },
         {
           name = "null",
@@ -409,18 +409,22 @@ template "project_data" {
         }]
         fhir_stores = [
           {
-            name                          = "fhir-store-a"
-            version                       = "R4"
-            enable_update_create          = true
-            disable_referential_integrity = false
-            disable_resource_versioning   = false
-            enable_history_import         = false
+            name                                = "fhir-store-a"
+            version                             = "R4"
+            enable_update_create                = true
+            disable_referential_integrity       = false
+            disable_resource_versioning         = false
+            enable_history_import               = false
+            enable_history_modifications        = false
+            complex_data_type_reference_parsing = "DISABLED"
             labels = {
               type = "phi"
             }
-            notification_config = {
+            notification_configs = [{
               pubsub_topic = "projects/{{.prefix}}-{{.env}}-data/topics/$${module.topic.topic}"
-            }
+              send_full_resource = true
+              send_previous_resource_on_delete = true
+	    }]
             stream_configs = [{
               resource_types = [
                 "Patient",
@@ -430,7 +434,11 @@ template "project_data" {
                 schema_config = {
                   schema_type               = "ANALYTICS"
                   recursive_structure_depth = 3
-                }
+                  last_updated_partition_config = {
+                    expiration_ms = 1e+06
+                    type          = "HOUR"
+                  }
+		}
               }
             }]
           },
@@ -497,6 +505,7 @@ template "project_data" {
             name = "pull-subscription"
           }
         ]
+        topic_message_retention_duration = "86400s"
       }]
     }
     terraform_addons = {
@@ -596,7 +605,6 @@ data "google_container_cluster" "gke_cluster" {
 }
 
 provider "kubernetes" {
-  load_config_file       = false
   token                  = data.google_client_config.default.access_token
   host                   = data.google_container_cluster.gke_cluster.endpoint
   client_certificate     = base64decode(data.google_container_cluster.gke_cluster.master_auth.0.client_certificate)

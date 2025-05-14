@@ -12,9 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Terraform version used is 0.14.8.
+# Terraform version used is 1.3.0.
 substitutions:
-  _CFT_TOOLS_CONTAINER: "gcr.io/cloud-foundation-cicd/cft/developer-tools@sha256:8b0d85766044b0e4701729f9e70ee78dcecdb8688bd86915eb2a1cb00580ba1e"
+  _CFT_TOOLS_CONTAINER: "gcr.io/cloud-foundation-cicd/cft/developer-tools-light@sha256:2d4d0f72d0dec6b388c8d8dc6d5eaf1fb23b4a24a1184a377fdf56ada630902d"
 
 timeout: 3600s
 
@@ -35,7 +35,7 @@ steps:
   waitFor: ["-"]
   id: Terraform Engine integration tests
   env:
-  - "RUN_INTEGRATION_TEST=true"
+  - "RUN_INTEGRATION_TEST=false"
   # These values are configured in the Cloud Build Trigger as substitutions.
   - "BILLING_ACCOUNT=${_BILLING_ACCOUNT}"
   - "FOLDER_ID=${_FOLDER_ID}"

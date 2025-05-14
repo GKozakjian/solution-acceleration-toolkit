@@ -17,7 +17,6 @@ data "google_client_config" "default" {}
 {{range get . "gke_clusters"}}
 provider "kubernetes" {
   alias                  = "{{resourceName . "name"}}"
-  load_config_file       = false
   host                   = "https://${module.{{resourceName . "name"}}.endpoint}"
   token                  = data.google_client_config.default.access_token
   cluster_ca_certificate = base64decode(module.{{resourceName . "name"}}.ca_certificate)
@@ -25,7 +24,7 @@ provider "kubernetes" {
 
 module "{{resourceName . "name"}}" {
   source  = "terraform-google-modules/kubernetes-engine/google//modules/safer-cluster-update-variant"
-  version = "~> 13.1.0"
+  version = "~> 29.0.0"
 
   providers = {
     kubernetes = kubernetes.{{resourceName . "name"}}
@@ -44,7 +43,6 @@ module "{{resourceName . "name"}}" {
   master_ipv4_cidr_block = "{{.master_ipv4_cidr_block}}"
   {{hclField . "master_authorized_networks" -}}
   {{hclField . "istio" -}}
-  skip_provisioners          = true
   enable_private_endpoint    = false
   release_channel            = "STABLE"
   {{if has . "service_account" -}}
