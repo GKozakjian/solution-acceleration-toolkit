@@ -77,3 +77,20 @@ module "network" {
     ],
   }
 }
+
+
+module "project_iam_member_member1" {
+  source  = "terraform-google-modules/iam/google//modules/member_iam"
+  version = "~> 7.7.1"
+
+  service_account_address = split(":", "group:test@test.com")[1]
+  project_id              = module.project.project_id
+  project_roles = [
+
+    "roles/viewer",
+
+    "roles/storage.admin",
+
+  ]
+  prefix = split(":", "group:test@test.com")[0]
+}

@@ -11,20 +11,19 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. */}}
-module "project_iam_members" {
-  source   = "terraform-google-modules/iam/google//modules/projects_iam"
-  version  = "~> 7.7.1"
 
-  projects = [module.project.project_id]
-  mode     = "additive"
+{{range  $member := .iam_members_new -}}
+module "project_iam_member_{{$member.name}}" {
+  source  = "terraform-google-modules/iam/google//modules/member_iam"
+  version = "~> 7.7.1"
 
-  bindings = {
-    {{range $role, $members := .iam_members -}}
-    "{{$role}}" = [
-      {{range $members -}}
-      "{{.}}",
-      {{end -}}
-    ],
-    {{end -}}
-  }
+  service_account_address = split(":","{{$member.member}}")[1]
+  project_id              = module.project.project_id
+  project_roles           = [
+  {{range $r := $member.roles}}
+  "{{$r}}",
+  {{end}}
+  ]
+  prefix                  = split(":","{{$member.member}}")[0]
 }
+{{end -}}

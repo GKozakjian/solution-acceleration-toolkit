@@ -1167,6 +1167,36 @@ schema = {
       description = "Map of IAM role to list of members to grant access to the role."
       type        = "object"
     }
+    iam_members_new = {
+                  description = "IAM member to grant access for."
+                  type        = "array"
+                  items = {
+                    type                 = "object"
+                    additionalProperties = false
+                    required = [
+                      "roles",
+                      "member",
+                      "name"
+                    ]
+                    properties = {
+                      member = {
+                        description = "IAM role to grant."
+                        type        = "string"
+                      }
+                      roles = {
+                        description = "Member to grant acess to role."
+                        type        = "array"
+                                    items = {
+              type = "string"
+            }
+                      }
+                      name = {
+                                                description = "unique module name."
+                        type        = "string"
+                    }
+                  }
+                }
+              }
     pubsub_topics = {
       description = "[Module](https://github.com/terraform-google-modules/terraform-google-pubsub)"
       type        = "array"
@@ -1717,7 +1747,13 @@ template "healthcare_datasets" {
 }
 {{end}}
 
-{{if has . "iam_members"}}
+{{if has . "iam_members" }}
+template "iam_members" {
+  component_path = "../components/resources/project_iam_members"
+}
+{{end}}
+
+{{if has . "iam_members_new" }}
 template "iam_members" {
   component_path = "../components/resources/project_iam_members"
 }

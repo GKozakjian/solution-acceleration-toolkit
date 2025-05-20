@@ -22,6 +22,7 @@ import (
 	"time"
 
 	"github.com/rodaine/hclencoder"
+	"github.com/google/uuid"
 )
 
 var funcMap = map[string]interface{}{
@@ -40,6 +41,12 @@ var funcMap = map[string]interface{}{
 	"substr":                substr,
 	"getEncodedJSON":        getEncodedJSON,
 	"getEncodedEscapedJSON": getEncodedEscapedJSON,
+	"uuid": uuidFunc,
+}
+
+// uuidFunc generates a new UUID.
+func uuidFunc() string {
+	return uuid.New().String()
 }
 
 // invalidIDRE defines the invalid characters not allowed in terraform resource names.

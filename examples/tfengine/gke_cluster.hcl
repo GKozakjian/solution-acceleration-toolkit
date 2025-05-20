@@ -32,6 +32,15 @@ template "networks" {
       is_shared_vpc_host = true
     }
     resources = {
+      iam_members_new = [
+       {
+         name = "member1"
+         roles =  ["roles/viewer",
+         "roles/storage.admin"
+       ]
+      member = "group:test@test.com"
+       },
+      ]
       compute_networks = [{
         name = "network"
         subnets = [
