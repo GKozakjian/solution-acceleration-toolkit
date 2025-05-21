@@ -1755,7 +1755,7 @@ template "iam_members" {
 
 {{if has . "iam_members_new" }}
 template "iam_members" {
-  component_path = "../components/resources/project_iam_members"
+  component_path = "../components/resources/project_iam_members_new"
 }
 {{end}}
 

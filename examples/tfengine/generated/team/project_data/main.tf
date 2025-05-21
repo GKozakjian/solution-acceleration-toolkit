@@ -218,15 +218,18 @@ module "healthcare_dataset" {
   ]
 }
 
-
-module "project_iam_member_7a5fb00a-38bf-4828-8faa-82e2f1c09e19" {
-  source  = "terraform-google-modules/iam/google//modules/member_iam"
+module "project_iam_members" {
+  source  = "terraform-google-modules/iam/google//modules/projects_iam"
   version = "~> 7.7.1"
 
-  service_account_address = split(":", "serviceAccount:bastion@example-prod-networks.iam.gserviceaccount.com")[1]
-  project_id              = module.project.project_id
-  project_roles           = ["roles/cloudsql.client"]
-  prefix                  = split(":", "serviceAccount:bastion@example-prod-networks.iam.gserviceaccount.com")[0]
+  projects = [module.project.project_id]
+  mode     = "additive"
+
+  bindings = {
+    "roles/cloudsql.client" = [
+      "serviceAccount:bastion@example-prod-networks.iam.gserviceaccount.com",
+    ],
+  }
 }
 
 module "topic" {
