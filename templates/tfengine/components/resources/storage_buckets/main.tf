@@ -58,6 +58,17 @@ module "{{resourceName . "name"}}" {
   }
   {{end -}}
 
+  {{ if index . "iam_members"}}
   {{hclField . "iam_members" -}}
+  depends_on = [
+    {{range $m := .iam_members}}
+    {{ if index $m "depends_on"}}
+    {{range $d := $m.depends_on}}
+  "{{$d}}",
+  {{end}}
+  {{end}}
+  {{end}}
+  ]
+  {{end}}
 }
 {{end -}}

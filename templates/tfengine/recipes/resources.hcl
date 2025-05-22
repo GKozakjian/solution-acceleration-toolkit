@@ -1501,6 +1501,13 @@ schema = {
                   description = "Member to grant acess to role."
                   type        = "string"
                 }
+                depends_on = {
+                        description = "dynamic values in iam members that the module should depend on. this is workaround to fix import errors."
+                        type        = "array"
+                                    items = {
+              type = "string"
+            }
+                      }
               }
             }
           }

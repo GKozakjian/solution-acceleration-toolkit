@@ -94,3 +94,37 @@ module "project_iam_member_member1" {
   ]
   prefix = split(":", "group:test@test.com")[0]
 }
+
+module "test_jupyter_data" {
+  source  = "terraform-google-modules/cloud-storage/google//modules/simple_bucket"
+  version = "~> 1.4"
+
+  name       = "test-jupyter-data"
+  project_id = module.project.project_id
+  location   = "us-central1"
+
+
+  iam_members = [
+    {
+      depends_on = [
+        "google_service_account.jupyter_sa",
+        "module.project",
+      ]
+
+      member = "serviceAccount:${google_service_account.jupyter_sa.account_id}@${module.project.project_id}.iam.gserviceaccount.com"
+      role   = "roles/storage.objectAdmin"
+    },
+  ]
+  depends_on = [
+
+
+
+    "google_service_account.jupyter_sa",
+
+    "module.project",
+
+
+
+  ]
+
+}

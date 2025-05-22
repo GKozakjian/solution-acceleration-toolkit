@@ -32,6 +32,19 @@ template "networks" {
       is_shared_vpc_host = true
     }
     resources = {
+      storage_buckets = [
+            {
+          name = "test-jupyter-data",
+          iam_members = [{
+            role   = "roles/storage.objectAdmin"
+            member = "serviceAccount:$${google_service_account.jupyter_sa.account_id}@$${module.project.project_id}.iam.gserviceaccount.com"
+                      depends_on = [
+             "google_service_account.jupyter_sa", # Ensure the service account is known/created/imported
+             "module.project",                    # Ensure the project is known/created/imported
+          ]
+          }]
+        },
+      ]
       iam_members_new = [
        {
          name = "member1"
